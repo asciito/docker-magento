@@ -1,5 +1,5 @@
 .env
 .idea
 .vscode
-code/*
-!code/.gitkeep
+www/*
+!www/.gitkeep

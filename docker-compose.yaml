@@ -6,16 +6,18 @@ services:
         ports:
             - 8080:8080
         volumes:
-            - ./code:/app
-            - ./server/nginx.conf:/opt/bitnami/nginx/conf/server_blocks/my_server_block.conf:ro
+            - ./www:/app
+            - ./config/nginx.conf:/opt/bitnami/nginx/conf/server_blocks/my_server_block.conf:ro
         networks:
             - app-network
 
     php-fpm:
-        image: bitnami/php-fpm
+        build:
+            context: docker/
+            dockerfile: php-fpm.Dockerfile
         volumes:
-            - ./code:/app
-            - ./server/custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini
+            - ./www:/app
+            - ./config/custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini
         networks:
             - app-network
 

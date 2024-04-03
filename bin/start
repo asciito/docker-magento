@@ -1,0 +1,32 @@
+#!/bin/bash
+
+echo "Starting containers...";
+
+# Start php-fpm
+if ! bin/docker ps php-fpm --format "{{.Name}}" | grep -q .; then
+    bin/docker up -d php-fpm
+fi
+
+# Check if project is already installed
+bin/cli find /app -maxdepth 1 -name "composer.json" | grep -q .
+
+if [ $? -eq 1 ]; then
+    bin/cli bash -c "rm -f .gitkeep && composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition ."
+fi
+
+# Start server container
+if ! bin/docker ps server --format "{{.Name}}" | grep -q .; then
+    bin/docker up -d server
+fi
+
+# Start database container
+if ! bin/docker ps db --format "{{.Name}}" | grep -q .; then
+    bin/docker up -d db
+fi
+
+# Start search container
+if ! bin/docker ps search --format "{{.Name}}" | grep -q .; then
+    bin/docker up -d search
+fi
+
+echo "All containers are up!"
