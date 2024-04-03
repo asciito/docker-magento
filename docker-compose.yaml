@@ -1,0 +1,60 @@
+version: "3"
+
+services:
+    server:
+        image: bitnami/nginx
+        ports:
+            - 8080:8080
+        volumes:
+            - ./code:/app
+            - ./server/nginx.conf:/opt/bitnami/nginx/conf/server_blocks/my_server_block.conf:ro
+        networks:
+            - app-network
+
+    php-fpm:
+        image: bitnami/php-fpm
+        volumes:
+            - ./code:/app
+            - ./server/custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini
+        networks:
+            - app-network
+
+    db:
+        image: mariadb:10.2
+        environment:
+            - MYSQL_DATABASE=${DB_NAME}
+            - MYSQL_ROOT_USER=${DB_USER}
+            - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+        volumes:
+            - db-data:/var/lib/mysql
+        networks:
+            - app-network
+
+    search:
+        image: opensearchproject/opensearch:latest
+        environment:
+            - cluster.name=docker-cluster
+            - discovery.type=single-node
+            - plugins.security.disabled=true
+            - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD}
+        volumes:
+            - search-data:/usr/share/opensearch/data
+        ports:
+            - 9200:9200
+            - 9600:9600
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+            nofile:
+                soft: 65536
+                hard: 65536
+        networks:
+            - app-network
+
+volumes:
+    db-data:
+    search-data:
+
+networks:
+    app-network:
