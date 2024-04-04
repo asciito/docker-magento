@@ -24,9 +24,10 @@ services:
     db:
         image: mariadb:10.2
         environment:
-            - MYSQL_DATABASE=${DB_NAME}
-            - MYSQL_ROOT_USER=${DB_USER}
-            - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+            - MARIADB_DATABASE=${DB_NAME}
+            - MARIADB_USER=${DB_USER}
+            - MARIADB_PASSWORD=${DB_PASSWORD}
+            - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=1
         volumes:
             - db-data:/var/lib/mysql
         networks:
