@@ -17,7 +17,8 @@ services:
             dockerfile: php-fpm.Dockerfile
         volumes:
             - ./www:/app
-            - ./config/custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini
+            - ./config/common.conf:/opt/bitnami/php/etc/common.conf:ro
+            - ./config/custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini:ro
         networks:
             - app-network
 
